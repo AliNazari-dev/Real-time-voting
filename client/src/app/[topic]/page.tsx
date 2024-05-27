@@ -2,17 +2,22 @@ import { redis } from "@/lib/redis";
 import ClientPage from "./ClientPage";
 
 interface PageProps {
-  param: {
+  params: {
     topic: string;
   };
 }
 
-const Page = async ({ param }: PageProps) => {
-  const { topic } = param;
+const Page = async ({ params }: PageProps) => {
+  const { topic } = params;
 
-  const initialData = await redis.zrange<(string | number)[]>(`room:${topic}`, 0, 49, {
-    withScores: true,
-  });
+  const initialData = await redis.zrange<(string | number)[]>(
+    `room:${topic}`,
+    0,
+    49,
+    {
+      withScores: true,
+    }
+  );
 
   const words: { text: string; value: number }[] = [];
 
