@@ -8,6 +8,8 @@ import { useState } from "react";
 import { Wordcloud } from "@visx/wordcloud";
 import { scaleLog } from "@visx/scale";
 import { Text } from "@visx/text";
+import { useMutation } from "@tanstack/react-query";
+import { submitComment } from "../actions";
 
 interface ClientPageProps {
   topicName: string;
@@ -24,6 +26,10 @@ const ClientPage = ({ initialData, topicName }: ClientPageProps) => {
       Math.max(...words.map((w) => w.value)),
     ],
     range: [10, 100],
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: submitComment,
   });
 
   const COLORS = ["#143059", "#2F6B9A", "#82a6c2"];
@@ -77,7 +83,12 @@ const ClientPage = ({ initialData, topicName }: ClientPageProps) => {
               onChange={({ target }) => setInput(target.value)}
               placeholder={`${topicName} is absolutely...`}
             />
-            <Button>Share</Button>
+            <Button
+              onClick={() => mutate({ comment: input, topicName })}
+              disabled={isPending}
+            >
+              Share
+            </Button>
           </div>
         </div>
       </MaxWithWrapper>
